@@ -83,6 +83,7 @@ BlockLocalPositionEstimator::BlockLocalPositionEstimator() :
 	_pn_p_noise_density(this, "PN_P"),
 	_pn_v_noise_density(this, "PN_V"),
 	_pn_b_noise_density(this, "PN_B"),
+	_pn_bb_noise_density(this, "PN_BB"),
 	_t_max_grade(this, "T_MAX_GRADE"),
 
 	// init origin
@@ -739,6 +740,7 @@ void BlockLocalPositionEstimator::initP()
 	_P(X_by, X_by) = 1e-6;
 	_P(X_bz, X_bz) = 1e-6;
 	_P(X_tz, X_tz) = 2 * EST_STDDEV_TZ_VALID;
+	_P(X_bb, X_bb) = 1e-6;
 }
 
 void BlockLocalPositionEstimator::initSS()
@@ -809,8 +811,9 @@ void BlockLocalPositionEstimator::updateSSParams()
 	_Q(X_bz, X_bz) = pn_b_sq;
 
 	// terrain random walk noise ((m/s)/sqrt(hz)), scales with velocity
-	float pn_t_stddev = (_t_max_grade.get() / 100.0f) * sqrtf(_x(X_vx) * _x(X_vx) + _x(X_vy) * _x(X_vy));
-	_Q(X_tz, X_tz) = pn_t_stddev * pn_t_stddev;
+	float pn_t_noise_density = (_t_max_grade.get() / 100.0f) * sqrtf(_x(X_vx) * _x(X_vx) + _x(X_vy) * _x(X_vy));
+	_Q(X_tz, X_tz) = pn_t_noise_density * pn_t_noise_density;
+	_Q(X_bb, X_bb) = _pn_bb_noise_density.get() * _pn_bb_noise_density.get();
 }
 
 void BlockLocalPositionEstimator::predict()
@@ -822,6 +825,7 @@ void BlockLocalPositionEstimator::predict()
 	if (integrate && _sub_att.get().R_valid) {
 		Matrix3f R_att(_sub_att.get().R);
 		Vector3f a(_sub_sensor.get().accelerometer_m_s2);
+		// note, bias is removed in dynamics function
 		_u = R_att * a;
 		_u(U_az) += 9.81f; // add g
 

@@ -116,7 +116,7 @@ PARAM_DEFINE_FLOAT(LPE_ACC_Z, 0.0015f);
  * @max 3
  * @decimal 2
  */
-PARAM_DEFINE_FLOAT(LPE_BAR_Z, 3.0f);
+PARAM_DEFINE_FLOAT(LPE_BAR_Z, 0.7f);
 
 /**
  * Enables GPS data, also forces alt init with GPS
@@ -158,7 +158,7 @@ PARAM_DEFINE_FLOAT(LPE_GPS_XY, 1.0f);
  * @max 200
  * @decimal 2
  */
-PARAM_DEFINE_FLOAT(LPE_GPS_Z, 3.0f);
+PARAM_DEFINE_FLOAT(LPE_GPS_Z, 100.0f);
 
 /**
  * GPS xy velocity standard deviation.
@@ -284,6 +284,17 @@ PARAM_DEFINE_FLOAT(LPE_PN_V, 0.1f);
  * @decimal 8
  */
 PARAM_DEFINE_FLOAT(LPE_PN_B, 1e-3f);
+
+/**
+ * Barometric pressure bias propgation noise density
+ *
+ * @group Local Position Estimator
+ * @unit (m)/s/sqrt(hz)
+ * @min 0.01
+ * @max 0.5
+ * @decimal 2
+ */
+PARAM_DEFINE_FLOAT(LPE_PN_BB, 0.1f);
 
 /**
  * Terrain maximum percent grade, hilly/outdoor (100 = 45 deg), flat/Indoor (0 = 0 deg)
