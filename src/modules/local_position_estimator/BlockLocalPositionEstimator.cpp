@@ -17,6 +17,8 @@ static const uint32_t 		EST_STDDEV_Z_VALID = 2.0; // 2.0 m
 static const uint32_t 		EST_STDDEV_TZ_VALID = 2.0; // 2.0 m
 static const bool integrate = true; // use accel for integrating
 
+static const float P_MAX = 1.0e6f; // max allowed value in state covariance
+
 BlockLocalPositionEstimator::BlockLocalPositionEstimator() :
 	// this block has no parent, and has name LPE
 	SuperBlock(NULL, "LPE"),
@@ -390,15 +392,31 @@ void BlockLocalPositionEstimator::update()
 		mavlink_and_console_log_info(&mavlink_log_pub, "[lpe] reinit x");
 	}
 
-	// reinitialize P if necessary
+	// force P symmetry and reinitialize P if necessary
 	bool reinit_P = false;
 
 	for (int i = 0; i < n_x; i++) {
-		for (int j = 0; j < n_x; j++) {
-			if (!PX4_ISFINITE(_P(i, j))) {
+		for (int j = 0; j <= i; j++) {
+			if (_P(i, j) > P_MAX) {
 				reinit_P = true;
-				break;
+
+			} else if (!PX4_ISFINITE(_P(i, j))) {
+				reinit_P = true;
 			}
+
+			if (i == j) {
+				// make sure diagonal elements are positive
+				if (_P(i, i) <= 0) {
+					reinit_P = true;
+				}
+
+			} else {
+				// copy elememnt from upper triangle to force
+				// symmetry
+				_P(j, i) = _P(i, j);
+			}
+
+			if (reinit_P) { break; }
 		}
 
 		if (reinit_P) { break; }
@@ -850,6 +868,7 @@ void BlockLocalPositionEstimator::predict()
 	_P += (_A * _P + _P * _A.transpose() +
 	       _B * _R * _B.transpose() +
 	       _Q) * getDt();
+
 	_xLowPass.update(_x);
 	_aglLowPass.update(agl());
 }
