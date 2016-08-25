@@ -38,7 +38,8 @@ void BlockLocalPositionEstimator::flowInit()
 	}
 }
 
-void BlockLocalPositionEstimator::flowDeinit() {
+void BlockLocalPositionEstimator::flowDeinit()
+{
 	_flowInitialized = false;
 	_flowQStats.reset();
 }
