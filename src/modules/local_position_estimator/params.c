@@ -116,7 +116,7 @@ PARAM_DEFINE_FLOAT(LPE_ACC_Z, 0.0015f);
  * @max 3
  * @decimal 2
  */
-PARAM_DEFINE_FLOAT(LPE_BAR_Z, 0.7f);
+PARAM_DEFINE_FLOAT(LPE_BAR_Z, 1.0f);
 
 /**
  * Enables GPS data, also forces alt init with GPS
@@ -258,7 +258,7 @@ PARAM_DEFINE_FLOAT(LPE_VIC_P, 0.05f);
  * @max 1
  * @decimal 8
  */
-PARAM_DEFINE_FLOAT(LPE_PN_P, 0.1f);
+PARAM_DEFINE_FLOAT(LPE_PN_P, 0.05f);
 
 /**
  * Velocity propagation noise density
@@ -272,7 +272,7 @@ PARAM_DEFINE_FLOAT(LPE_PN_P, 0.1f);
  * @max 1
  * @decimal 8
  */
-PARAM_DEFINE_FLOAT(LPE_PN_V, 0.1f);
+PARAM_DEFINE_FLOAT(LPE_PN_V, 0.05f);
 
 /**
  * Accel bias propagation noise density
