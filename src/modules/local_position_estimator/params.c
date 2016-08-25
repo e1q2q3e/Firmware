@@ -181,7 +181,7 @@ PARAM_DEFINE_FLOAT(LPE_GPS_VXY, 0.25f);
  * @max 2
  * @decimal 3
  */
-PARAM_DEFINE_FLOAT(LPE_GPS_VZ, 0.25f);
+PARAM_DEFINE_FLOAT(LPE_GPS_VZ, 1.0f);
 
 /**
  * Max EPH allowed for GPS initialization
