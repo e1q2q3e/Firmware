@@ -149,7 +149,6 @@ BlockLocalPositionEstimator::BlockLocalPositionEstimator() :
 	// flow integration
 	_flowX(0),
 	_flowY(0),
-	_flowMeanQual(0),
 
 	// status
 	_validXY(false),
@@ -196,8 +195,6 @@ BlockLocalPositionEstimator::BlockLocalPositionEstimator() :
 	// initialize A, B,  P, x, u
 	_x.setZero();
 	_u.setZero();
-	_flowX = 0;
-	_flowY = 0;
 	initSS();
 
 	// perf counters

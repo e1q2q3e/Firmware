@@ -185,6 +185,7 @@ private:
 	int  flowMeasure(Vector<float, n_y_flow> &y);
 	void flowCorrect();
 	void flowInit();
+	void flowDeinit();
 	void flowCheckTimeout();
 
 	// vision
@@ -355,7 +356,6 @@ private:
 	// flow integration
 	float _flowX;
 	float _flowY;
-	float _flowMeanQual;
 
 	// status
 	bool _validXY;
