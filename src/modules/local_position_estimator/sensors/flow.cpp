@@ -68,6 +68,7 @@ int BlockLocalPositionEstimator::flowMeasure(Vector<float, n_y_flow> &y)
 			mavlink_and_console_log_info(&mavlink_log_pub,
 						     "[lpe] flow too far from GPS, disabled");
 			_flowInitialized = false;
+			_flowQStats.reset();
 			return -1;
 		}
 	}
