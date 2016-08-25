@@ -398,7 +398,11 @@ void BlockLocalPositionEstimator::update()
 	for (int i = 0; i < n_x; i++) {
 		for (int j = 0; j <= i; j++) {
 			if (_P(i, j) > P_MAX) {
-				reinit_P = true;
+				// if we aren't measuring terrain state etc.
+				// then it will grow to this max, don't
+				// want to reset here or it will be a
+				// periodic reset
+				_P(i, j) = P_MAX;
 
 			} else if (!PX4_ISFINITE(_P(i, j))) {
 				reinit_P = true;
