@@ -283,6 +283,7 @@ private:
 	// flow parameters
 	BlockParamFloat  _flow_z_offset;
 	BlockParamFloat  _flow_xy_stddev;
+	BlockParamFloat  _flow_xy_d_stddev;
 	//BlockParamFloat  _flow_board_x_offs;
 	//BlockParamFloat  _flow_board_y_offs;
 	BlockParamInt    _flow_min_q;
@@ -292,6 +293,7 @@ private:
 	BlockParamFloat  _pn_v_noise_density;
 	BlockParamFloat  _pn_b_noise_density;
 	BlockParamFloat  _pn_bb_noise_density;
+	BlockParamFloat  _pn_t_noise_density;
 	BlockParamFloat  _t_max_grade;
 
 	// init origin

@@ -77,6 +77,7 @@ BlockLocalPositionEstimator::BlockLocalPositionEstimator() :
 	_mocap_p_stddev(this, "VIC_P"),
 	_flow_z_offset(this, "FLW_OFF_Z"),
 	_flow_xy_stddev(this, "FLW_XY"),
+	_flow_xy_d_stddev(this, "FLW_XY_D"),
 	//_flow_board_x_offs(NULL, "SENS_FLW_XOFF"),
 	//_flow_board_y_offs(NULL, "SENS_FLW_YOFF"),
 	_flow_min_q(this, "FLW_QMIN"),
@@ -84,6 +85,7 @@ BlockLocalPositionEstimator::BlockLocalPositionEstimator() :
 	_pn_v_noise_density(this, "PN_V"),
 	_pn_b_noise_density(this, "PN_B"),
 	_pn_bb_noise_density(this, "PN_BB"),
+	_pn_t_noise_density(this, "PN_T"),
 	_t_max_grade(this, "T_MAX_GRADE"),
 
 	// init origin
@@ -656,7 +658,11 @@ void BlockLocalPositionEstimator::publishLocalPos()
 		_pub_lpos.get().dist_bottom = _aglLowPass.getState();
 		_pub_lpos.get().dist_bottom_rate = - xLP(X_vz);
 		_pub_lpos.get().surface_bottom_timestamp = _timeStamp;
-		_pub_lpos.get().dist_bottom_valid = _validTZ && _validZ;
+		// we estimate agl even when we don't have terrain info
+		// if you are in terrain following mode this is important
+		// so that if terrain estimation fails there isn't a
+		// sudden altitude jump
+		_pub_lpos.get().dist_bottom_valid = _validZ;
 		_pub_lpos.get().eph = sqrtf(_P(X_x, X_x) + _P(X_y, X_y));
 		_pub_lpos.get().epv = sqrtf(_P(X_z, X_z));
 		_pub_lpos.update();
@@ -808,8 +814,12 @@ void BlockLocalPositionEstimator::updateSSParams()
 	_Q(X_bz, X_bz) = pn_b_sq;
 
 	// terrain random walk noise ((m/s)/sqrt(hz)), scales with velocity
-	float pn_t_noise_density = (_t_max_grade.get() / 100.0f) * sqrtf(_x(X_vx) * _x(X_vx) + _x(X_vy) * _x(X_vy));
+	float pn_t_noise_density =
+		_pn_t_noise_density.get() +
+		(_t_max_grade.get() / 100.0f) * sqrtf(_x(X_vx) * _x(X_vx) + _x(X_vy) * _x(X_vy));
 	_Q(X_tz, X_tz) = pn_t_noise_density * pn_t_noise_density;
+
+	// baro random walk noise
 	_Q(X_bb, X_bb) = _pn_bb_noise_density.get() * _pn_bb_noise_density.get();
 }
 

@@ -76,8 +76,9 @@ int BlockLocalPositionEstimator::flowMeasure(Vector<float, n_y_flow> &y)
 
 		if (delta.norm() > 3) {
 			mavlink_and_console_log_info(&mavlink_log_pub,
-						     "[lpe] flow too far from GPS, disabled");
-			flowDeinit();
+						     "[lpe] flow too far from GPS, resetting position");
+			_flowX = px;
+			_flowY = py;
 			return -1;
 		}
 	}
@@ -137,10 +138,10 @@ void BlockLocalPositionEstimator::flowCorrect()
 
 	SquareMatrix<float, n_y_flow> R;
 	R.setZero();
-	R(Y_flow_x, Y_flow_x) =
-		_flow_xy_stddev.get() * _flow_xy_stddev.get();
-	R(Y_flow_y, Y_flow_y) =
-		_flow_xy_stddev.get() * _flow_xy_stddev.get();
+	float d = agl() * cosf(_sub_att.get().roll) * cosf(_sub_att.get().pitch);
+	float flow_xy_stddev = _flow_xy_stddev.get() + _flow_xy_d_stddev.get()*d ;
+	R(Y_flow_x, Y_flow_x) = flow_xy_stddev*flow_xy_stddev;
+	R(Y_flow_y, Y_flow_y) = R(Y_flow_x, Y_flow_x);
 
 	// residual
 	Vector<float, 2> r = y - C * _x;
