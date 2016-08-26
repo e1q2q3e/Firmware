@@ -139,8 +139,8 @@ void BlockLocalPositionEstimator::flowCorrect()
 	SquareMatrix<float, n_y_flow> R;
 	R.setZero();
 	float d = agl() * cosf(_sub_att.get().roll) * cosf(_sub_att.get().pitch);
-	float flow_xy_stddev = _flow_xy_stddev.get() + _flow_xy_d_stddev.get()*d ;
-	R(Y_flow_x, Y_flow_x) = flow_xy_stddev*flow_xy_stddev;
+	float flow_xy_stddev = _flow_xy_stddev.get() + _flow_xy_d_stddev.get() * d ;
+	R(Y_flow_x, Y_flow_x) = flow_xy_stddev * flow_xy_stddev;
 	R(Y_flow_y, Y_flow_y) = R(Y_flow_x, Y_flow_x);
 
 	// residual
